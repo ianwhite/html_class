@@ -15,10 +15,10 @@ module HtmlClasses
     end
 
     it "can #register and retrieve with #[]" do
-      registry = Registry.new
+      registry = HTMLClasses::Registry.new
       registry = registry.register :button, "rounded border"
       registry = registry.register [:button, :disabled], "bg-gray"
-      registry = registry.register Key[:button, :large], "text-lg"
+      registry = registry.register HTMLClasses::Key[:button, :large], "text-lg"
 
       registry2 = registry.register :button, "square", :replace
 
@@ -32,19 +32,19 @@ module HtmlClasses
     end
 
     it "can be initialized with a hash" do
-      registry = Registry.new({ :button => "rounded border",
-                                          [:button, :large] => "text-lg" })
+      registry = Registry.new({:button           => "rounded border",
+                               [:button, :large] => "text-lg"})
 
       registry[:button].should eq "rounded border"
       registry[:button, :large].should eq "rounded border text-lg"
     end
 
     it "can register another registry to combine registries" do
-      registry = Registry.new({ :button => "rounded border",
-                                          [:button, :large] => "text-lg" })
+      registry = Registry.new({:button           => "rounded border",
+                               [:button, :large] => "text-lg"})
 
-      registry2 = Registry.new({ :button => "square",
-                                          [:button, :disabled] => "bg-gray" })
+      registry2 = Registry.new({:button              => "square",
+                                [:button, :disabled] => "bg-gray"})
 
       registry3 = registry.register registry2
 
@@ -55,11 +55,11 @@ module HtmlClasses
     end
 
     it "can register hash to register many at once" do
-      registry = Registry.new({ :button => "rounded border",
-                                          [:button, :large] => "text-lg" })
+      registry = Registry.new({:button           => "rounded border",
+                               [:button, :large] => "text-lg"})
 
-      registry2 = registry.register({ :button => "square",
-                                      [:button, :disabled] => "bg-gray" })
+      registry2 = registry.register({:button              => "square",
+                                     [:button, :disabled] => "bg-gray"})
 
       registry2[:button].should eq "rounded border square"
       registry2[:button, :large].should eq "rounded border square text-lg"

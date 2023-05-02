@@ -15,7 +15,7 @@ module HtmlClasses
   # registry[:button, disabled: true] # => "rounded bg-blue-500 text-white hover:bg-blue-600 opacity-50 cursor-not-allowed"
   #
   # # the following depends on having a merge strategy (such as Tailwind) that knows what classes override others
-  # registry[:button, :danger]        # => "rounded text-white bg-red-500 hover:bg-red-600"
+  # registry[:button, :danger] # => "rounded text-white bg-red-500 hover:bg-red-600"
   # ```
   #
   class Registry
@@ -61,11 +61,11 @@ module HtmlClasses
     end
 
     def register(key, html_class, on_collision : OnCollision = OnCollision::Merge) : Registry
-      clone.register!(key, html_class, on_collision)
+      clone.register! key, html_class, on_collision
     end
 
     def register(registry, on_collision : OnCollision = OnCollision::Merge) : Registry
-      clone.register!(registry, on_collision)
+      clone.register! registry, on_collision
     end
 
     def [](key : Key) : String
