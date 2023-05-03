@@ -1,10 +1,10 @@
 require "../spec_helper"
 require "html_class_merge/tailwind"
 
-module HtmlClasses
+module HTMLClasses
   describe "Registry with Tailwind merge strategy" do
     it "uses Tailwind to merge classes" do
-      registry = Registry.new(merge_strategy: HtmlClassMerge::Tailwind)
+      registry = Registry.new(merge_strategy: HTMLClassMerge::Tailwind)
 
       registry.register! :button, "rounded bg-blue-500 text-white hover:bg-blue-600"
       registry.register! [:button, :disabled], "opacity-50 cursor-not-allowed"

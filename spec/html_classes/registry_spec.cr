@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-module HtmlClasses
+module HTMLClasses
   describe Registry do
     it "#register returns a new registry" do
       registry = Registry.new

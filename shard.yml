@@ -1,5 +1,5 @@
 name: html_classes
-version: 0.1.1
+version: 0.2.0
 
 authors:
   - Ian White <ian.w.white@gmail.com>
@@ -11,5 +11,7 @@ license: MIT
 dependencies:
   html_class_merge:
     github: ianwhite/html_class_merge
+    version: < 1
   habitat:
     github: luckyframework/habitat
+    version: < 1

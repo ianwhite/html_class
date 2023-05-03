@@ -1,12 +1,9 @@
-require "html_class_merge/merge"
-require "html_class_merge/tokenize"
-
-module HtmlClasses
+module HTMLClasses
   class JoinMerge
-    include HtmlClassMerge::Merge
-    include HtmlClassMerge::Tokenize
+    include MergeStrategy
+    include Tokenize
 
-    def merge(*tokens : HtmlClassMerge::Tokenizable) : String
+    def merge(*tokens : Tokenizable) : String
       tokenize(*tokens).join(" ")
     end
   end

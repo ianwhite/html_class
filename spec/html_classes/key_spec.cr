@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-module HtmlClasses
+module HTMLClasses
   describe Key do
     it "can be a single name" do
       Key.new(:foo).should eq Key[:foo]
@@ -29,8 +29,8 @@ module HtmlClasses
     end
 
     it "#inspect returns a self-similar string representation" do
-      Key[:foo].inspect.should eq "HtmlClasses::Key[:foo]"
-      Key[:foo, :large, :red].inspect.should eq "HtmlClasses::Key[:foo, :large, :red]"
+      Key[:foo].inspect.should eq "HTMLClasses::Key[:foo]"
+      Key[:foo, :large, :red].inspect.should eq "HTMLClasses::Key[:foo, :large, :red]"
     end
   end
 end

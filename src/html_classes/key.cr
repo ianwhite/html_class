@@ -1,4 +1,4 @@
-module HtmlClasses
+module HTMLClasses
   # The key for a html class is a Symbol, with an optional set of variant Symbols
   struct Key
     @key : Symbol

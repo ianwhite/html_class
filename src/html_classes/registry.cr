@@ -1,6 +1,6 @@
 require "./key"
 
-module HtmlClasses
+module HTMLClasses
   # A registry of html classes, such as:
   #
   # ```
@@ -22,15 +22,9 @@ module HtmlClasses
     @registry : Hash(Key, String)
 
     # The strategy to use when merging classes
-    @merge_strategy : HtmlClassMerge::Merge
+    @merge_strategy : MergeStrategy
 
-    # What to do when a class is registered with a name that already exists
-    enum OnCollision
-      Replace
-      Merge
-    end
-
-    def initialize(@registry = {} of Key => String, @merge_strategy = HtmlClasses.settings.merge_strategy)
+    def initialize(@registry = {} of Key => String, @merge_strategy = HTMLClasses.settings.merge_strategy)
     end
 
     def initialize(registry : Hash(Symbol | Array(Symbol), String), *args)
@@ -42,7 +36,7 @@ module HtmlClasses
     end
 
     def register!(key : Key, html_class : String, on_collision : OnCollision = OnCollision::Merge) : self
-      @registry[key] = handle_collision(key, html_class, on_collision)
+      @registry[key] = handle_collision key, html_class, on_collision
       self
     end
 
@@ -69,7 +63,7 @@ module HtmlClasses
     end
 
     def [](key : Key) : String
-      @merge_strategy.merge key.combinations.compact_map { |n| @registry[n]? }
+      merge key.combinations.compact_map { |n| @registry[n]? }
     end
 
     def [](*args, **kwargs) : String
@@ -80,9 +74,13 @@ module HtmlClasses
       @registry.dup
     end
 
+    def merge(*args : Tokenizable) : String
+      @merge_strategy.merge(*args)
+    end
+
     private def handle_collision(key : Key, html_class : String, on_collision : OnCollision)
       if on_collision == OnCollision::Merge && @registry.has_key?(key)
-        @merge_strategy.merge [@registry[key], html_class]
+        merge [@registry[key], html_class]
       else
         html_class
       end
