@@ -35,30 +35,30 @@ module HTMLClasses
       self.class.new registry.dup, @merge_strategy
     end
 
-    def register!(key : Key, html_class : String, on_collision : OnCollision = OnCollision::Merge) : self
+    def register!(key : Key, html_class : String, on_collision : OnCollision = :merge) : self
       @registry[key] = handle_collision key, html_class, on_collision
       self
     end
 
-    def register!(key : Symbol | Array(Symbol), html_class : String, on_collision : OnCollision = OnCollision::Merge) : self
+    def register!(key : Symbol | Array(Symbol), html_class : String, on_collision : OnCollision = :merge) : self
       register! Key.new(key), html_class, on_collision
     end
 
-    def register!(registry : Registry, on_collision : OnCollision = OnCollision::Merge) : self
+    def register!(registry : Registry, on_collision : OnCollision = :merge) : self
       registry.to_h.reduce(self) do |registry, (key, html_class)|
         register! key, html_class, on_collision
       end
     end
 
-    def register!(hash : Hash(Symbol | Array(Symbol), String), on_collision : OnCollision = OnCollision::Merge) : self
+    def register!(hash : Hash(Symbol | Array(Symbol), String), on_collision : OnCollision = :merge) : self
       register! clone(hash), on_collision
     end
 
-    def register(key, html_class, on_collision : OnCollision = OnCollision::Merge) : Registry
+    def register(key, html_class, on_collision : OnCollision = :merge) : Registry
       clone.register! key, html_class, on_collision
     end
 
-    def register(registry, on_collision : OnCollision = OnCollision::Merge) : Registry
+    def register(registry, on_collision : OnCollision = :merge) : Registry
       clone.register! registry, on_collision
     end
 
