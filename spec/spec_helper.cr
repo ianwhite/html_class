@@ -1,2 +1,2 @@
 require "spec"
-require "../src/html_classes"
+require "../src/html_class"
