@@ -10,17 +10,20 @@ class MyView
 end
 
 class SubView < MyView
-  html_class :h1, "font-bold", :merge   # default is :merge
-  html_class :button, "", :replace      # but you can also :replace
+  html_class :h1, "font-bold", :merge # default is :merge
+  html_class :button, "", :replace    # but you can also :replace
 end
 
 class LargeView
   include HTMLClass::Tailwind
 
-  # import from another view
-  html_class MyView.html_class_dictionary
+  html_class MyView.html_class_dictionary # import from another view
   html_class :h1, "text-2xl"
   html_class :button, "p-5 text-lg"
+end
+
+class SubLargeView < LargeView
+  # testing that the dictionary is inherited, and that the dictionary is not copied
 end
 
 describe "README examples" do
@@ -43,5 +46,10 @@ describe "README examples" do
     large_view = LargeView.new
     large_view.html_class(:h1).should eq "text-2xl"
     large_view.html_class(:button).should eq "rounded bg-gray-50 border-black text-black p-5 text-lg"
+  end
+
+  it "testing inheritance" do
+    MyView.html_class_dictionary.object_id.should_not eq SubView.html_class_dictionary.object_id
+    LargeView.html_class_dictionary.object_id.should eq SubLargeView.html_class_dictionary.object_id
   end
 end

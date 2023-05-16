@@ -1,8 +1,8 @@
 require "html_class_merge/merge"
 require "html_class_merge/tokenize"
 
+require "./html_class/dictionary"
 require "./html_class/scanner"
-require "./html_class/config"
 
 module HTMLClass
   VERSION = "0.3.0"
@@ -12,9 +12,6 @@ module HTMLClass
     Replace
     Merge
   end
-
-  # Dictionary of html classes by symbol keys, useful for utility class frameworks
-  alias Dictionary = Hash(Symbol | Set(Symbol), String)
 
   # Simple merge strategy that just joins tokens with a space
   class JoinMerge
@@ -33,14 +30,14 @@ module HTMLClass
 
   macro included
     class_property(html_class_merge) { HTMLClass.default_merge }
-    class_property(html_class_dictionary) { Dictionary.new }
+    class_property(html_class_dictionary) { Dictionary.new(merge: html_class_merge) }
 
     private def self.html_class(key, html_class, on_collision : OnCollision = :merge)
-      self.html_class_dictionary = Config.new(html_class_dictionary, html_class_merge).add(key, html_class, on_collision)
+      self.html_class_dictionary = html_class_dictionary.add(key, html_class, on_collision)
     end
 
     private def self.html_class(dictionary : Dictionary, on_collision : OnCollision = :merge)
-      self.html_class_dictionary = Config.new(html_class_dictionary, html_class_merge).add(dictionary, on_collision)
+      self.html_class_dictionary = html_class_dictionary.add(dictionary, on_collision)
     end
 
     macro inherited

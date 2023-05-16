@@ -1,15 +1,16 @@
 module HTMLClass
   # Coerces a variety of arguments into a String of html classes
   # Hashes and NameTuples are turned into arrays such that the keys are only included if the value is true.
-  # Symbols are converted to to html classes via @dictionary
-  # all sets of symbols are also looked up in the @dictionary so any specific combinations of symbols can be defined
+  # Symbols are converted to to html classes via @dictionary.
+  # All sets of symbols are also looked up in the @dictionary so any specific behaviour of a set of symbols
+  # can be defined.
   class Scanner
     alias Argument = String | Symbol | Enumerable(Symbol | String)
 
     @dictionary : Dictionary
     @merge : HTMLClassMerge::Merge
-    @scanned_keys = Array(Symbol).new
-    @emitted_combination_keys = Array(Set(Symbol)).new
+    @seen_keys = Array(Symbol).new
+    @seen_key_sets = Array(Set(Symbol)).new
 
     def initialize(@dictionary, @merge)
     end
@@ -22,42 +23,35 @@ module HTMLClass
       scan(*args, kwargs.to_h)
     end
 
-    def scan(args : Hash(Argument, Bool)) : String
-      @merge.merge args.select { |_, v| v }.keys.flat_map { |arg| scan arg }
+    def scan(optional : Hash(Argument, Bool)) : String
+      @merge.merge optional.select { |_, v| v }.keys.flat_map { |arg| scan arg }
     end
 
-    def scan(args : NamedTuple) : String
-      @merge.merge args.to_h.select { |_, v| v }.keys.flat_map { |arg| scan arg }
+    def scan(optional : NamedTuple) : String
+      scan optional.to_h
     end
 
     def scan(args : Enumerable(Symbol | String)) : String
       @merge.merge args.flat_map { |arg| scan arg }
     end
 
-    def scan(arg : String) : String
-      arg
+    def scan(html_class : String) : String
+      html_class
     end
 
     def scan(key : Symbol) : String
-      @scanned_keys << key
+      @seen_keys << key
 
-      html_classes = combinations_from_dictionary
-      html_classes.unshift(@dictionary[key]) if @dictionary.has_key?(key)
+      possible_key_sets = possible_key_sets(@seen_keys)
+      keys = [key] + possible_key_sets - @seen_key_sets
+      @seen_key_sets = possible_key_sets
 
-      @merge.merge html_classes
+      @merge.merge keys.compact_map { |k| @dictionary[k]? }
     end
 
-    private def combinations_from_dictionary
-      (combination_keys - @emitted_combination_keys).compact_map do |key|
-        if @dictionary.has_key?(key)
-          @emitted_combination_keys << key
-          @dictionary[key]
-        end
-      end
-    end
-
-    private def combination_keys
-      (2..@scanned_keys.size).flat_map { |n| @scanned_keys.combinations(n).map(&.to_set) }
+    # return all possible key sets for the given keys
+    private def possible_key_sets(keys)
+      (2..keys.size).flat_map { |n| keys.combinations(n).map(&.to_set) }
     end
   end
 end

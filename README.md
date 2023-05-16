@@ -1,6 +1,9 @@
-# html_classes
+# html_class
 
-TODO: Write a description here
+Provide a mechanism for
+
+1. Joining arbitrary HTML classes together, using a merge strategy (such as Tailwind)
+2. Specifying groups of HTML classes by a symbol key (or Set of keys)
 
 ## Installation
 
@@ -16,12 +19,16 @@ TODO: Write a description here
 
 ## Usage
 
+Example of defining some groups of html classes, based on Tailwind's rules for merging classes, then using those
+groups, along with arbitrary HTML classes to construct a `class` HTML attribute
+
 ```crystal
 require "html_class/tailwind"
 
 class MyView
   include HTMLClass::Tailwind
 
+  # define some styles
   html_class :h1, "text-xl"
   html_class :button, "rounded p-3 bg-gray-50 border-black text-black"
   html_class :success, "bg-green-50 border-green-900 text-green"
@@ -29,9 +36,9 @@ end
 
 view = MyView.new
 view.html_class(:h1)                     # => "text-xl"
-view.html_class(:button)                 # => "rounded p-3 bg-gray-50 border-black text-black"
+view.html_class(:button, success: false) # => "rounded p-3 bg-gray-50 border-black text-black"
 view.html_class(:button, "rounded-none") # => "p-3 bg-gray-50 border-black text-black rounded-none"
-view.html_class(:button, :success)       # => "rounded p-3 bg-green-50 border-green-900 text-green"
+view.html_class(:button, success: true)  # => "rounded p-3 bg-green-50 border-green-900 text-green"
 
 # you can inherit html_classes, and merge or replace them
 class SubView < MyView
@@ -42,7 +49,6 @@ end
 sub_view = SubView.new
 sub_view.html_class(:h1)     # => "text-xl font-bold"
 sub_view.html_class(:button) # => ""
-
 
 # you can also import multiple html class dictionaries at will (NB this class does not inherit form the above)
 class LargeView
@@ -58,20 +64,6 @@ large_view.html_class(:h1)     # => "text-2xl"
 large_view.html_class(:button) # => "rounded bg-gray-50 border-black text-black p-5 text-lg"
 ```
 
-TODO: Write usage instructions here
-
-## Development
-
-TODO: Write development instructions here
-
-## Contributing
-
-1. Fork it (<https://github.com/your-github-user/html_classes/fork>)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
-
 ## Contributors
 
-- [Ian White](https://github.com/your-github-user) - creator and maintainer
+- [Ian White](https://github.com/ianwhite) - creator and maintainer
