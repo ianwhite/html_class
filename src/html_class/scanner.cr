@@ -8,8 +8,11 @@ module HTMLClass
     alias Argument = String | Symbol | Enumerable(Symbol | String)
 
     @dictionary : Dictionary
+
     @merge : HTMLClassMerge::Merge
+
     @seen_keys = Array(Symbol).new
+
     @seen_key_sets = Array(Set(Symbol)).new
 
     def initialize(@dictionary, @merge)

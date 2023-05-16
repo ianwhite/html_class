@@ -7,7 +7,7 @@ require "./html_class/scanner"
 module HTMLClass
   VERSION = "0.3.0"
 
-  # What to do when a class is registered with a name that already exists
+  # What to do when a class is added with a name that already exists
   enum OnCollision
     Replace
     Merge
@@ -36,7 +36,7 @@ module HTMLClass
       self.html_class_dictionary = html_class_dictionary.add(key, html_class, on_collision)
     end
 
-    private def self.html_class(dictionary : Dictionary, on_collision : OnCollision = :merge)
+    private def self.html_class(dictionary, on_collision : OnCollision = :merge)
       self.html_class_dictionary = html_class_dictionary.add(dictionary, on_collision)
     end
 
