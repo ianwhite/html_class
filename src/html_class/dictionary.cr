@@ -7,12 +7,10 @@ module HTMLClass
     alias V = String
 
     @hash : Hash(K, V)
-    @merge : HTMLClassMerge::Merge
 
-    include Enumerable({K, V})
-    include Iterable({K, V})
+    protected getter merge : HTMLClassMerge::Merge
 
-    delegate :each, :[], :[]?, to: @hash
+    delegate :[], :[]?, to: @hash
 
     def initialize(@hash = Hash(K, V).new, @merge = HTMLClass.default_merge)
     end
@@ -26,10 +24,6 @@ module HTMLClass
       @hash.dup
     end
 
-    def dup
-      self.class.new(@hash.dup, @merge)
-    end
-
     def add(key : K, html_class : V, on_collision : OnCollision = :merge) : self
       self.class.new(@hash.merge({key => handle_collision(key, html_class, on_collision)}), @merge)
     end
@@ -39,14 +33,14 @@ module HTMLClass
     end
 
     def add(dictionary : Dictionary, on_collision : OnCollision = :merge) : self
-      dictionary.reduce(self.dup) do |result, (key, html_class)|
+      dictionary.to_h.reduce(self.class.new(self)) do |result, (key, html_class)|
         result.add key, html_class, on_collision
       end
     end
 
     private def handle_collision(key, html_class, on_collision) : V
-      if on_collision == OnCollision::Merge && @hash.has_key?(key)
-        @merge.merge [@hash[key], html_class]
+      if on_collision == OnCollision::Merge && (prev_html_class = @hash[key]?)
+        @merge.merge [prev_html_class, html_class]
       else
         html_class
       end
