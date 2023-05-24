@@ -5,7 +5,9 @@ module HTMLClass
   # All sets of symbols are also looked up in the @dictionary so any specific behaviour of a set of symbols
   # can be defined.
   class Scanner
-    alias Argument = String | Symbol | Enumerable(Symbol | String)
+    alias SingleArg = String | Symbol | Nil
+    alias MultipleArgs = Enumerable(SingleArg)
+    alias Arg = SingleArg | MultipleArgs
 
     @dictionary : Dictionary
 
@@ -18,7 +20,7 @@ module HTMLClass
     def initialize(@dictionary, @merge)
     end
 
-    def scan(*args : Argument | Hash(Argument, Bool) | NamedTuple) : String
+    def scan(*args : Arg | Hash(Arg, Bool) | NamedTuple) : String
       @merge.merge args.flat_map { |arg| scan arg }
     end
 
@@ -26,7 +28,7 @@ module HTMLClass
       scan(*args, kwargs.to_h)
     end
 
-    def scan(optional : Hash(Argument, Bool)) : String
+    def scan(optional : Hash(Arg, Bool)) : String
       @merge.merge optional.select { |_, v| v }.keys.flat_map { |arg| scan arg }
     end
 
@@ -34,12 +36,16 @@ module HTMLClass
       scan optional.to_h
     end
 
-    def scan(args : Enumerable(Symbol | String)) : String
+    def scan(args : MultipleArgs) : String
       @merge.merge args.flat_map { |arg| scan arg }
     end
 
     def scan(html_class : String) : String
       html_class
+    end
+
+    def scan(_nil : Nil) : String
+      ""
     end
 
     def scan(key : Symbol) : String
