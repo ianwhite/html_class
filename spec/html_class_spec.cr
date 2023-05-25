@@ -61,9 +61,9 @@ module HTMLClass
       end
 
       it "html_class( Array of HTMLClass::Arg )" do
-        args = [:card, ["foo"], {success: true, failure: false}]
+        args = [:card, ["foo"], [:card, ["foo"], {success: true, failure: false}]]
         obj = TestIncludeHTMLClass.new
-        obj.html_class(args).should eq "border rounded p-5 foo text-green border-green"
+        obj.html_class(args).should eq "border rounded p-5 foo border rounded p-5 foo text-green border-green border-green border-green"
       end
     end
   end

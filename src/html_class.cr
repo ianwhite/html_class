@@ -14,7 +14,7 @@ module HTMLClass
   end
 
   # Type of argument to #html_class instance method (see HTMLClass::Scanner#scan)
-  alias Arg = Nil | Symbol | String | Array(Symbol | String) | Hash(Symbol | String, Bool)
+  alias Arg = Symbol | String | Array(Symbol | String) | Hash(Symbol | String, Bool)
 
   # Simple merge strategy that just joins tokens with a space
   class JoinMerge

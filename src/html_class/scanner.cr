@@ -20,8 +20,8 @@ module HTMLClass
       @merge.merge args.flat_map { |arg| scan arg }
     end
 
-    def scan(*args, **kwargs) : String
-      scan(*args, kwargs.to_h)
+    def scan(*args : HTMLClass::Arg | NamedTuple, **kwargs) : String
+      scan(args.to_a + [kwargs.to_h])
     end
 
     def scan(optional : Hash) : String
