@@ -5,13 +5,16 @@ require "./html_class/dictionary"
 require "./html_class/scanner"
 
 module HTMLClass
-  VERSION = "0.3.1"
+  VERSION = "0.3.2"
 
   # What to do when a class is added with a name that already exists
   enum OnCollision
     Replace
     Merge
   end
+
+  # Type of argument to #html_class instance method (see HTMLClass::Scanner#scan)
+  alias Arg = Nil | Symbol | String | Array(Symbol | String) | Hash(Symbol | String, Bool)
 
   # Simple merge strategy that just joins tokens with a space
   class JoinMerge
