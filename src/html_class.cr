@@ -5,7 +5,7 @@ require "./html_class/dictionary"
 require "./html_class/scanner"
 
 module HTMLClass
-  VERSION = "0.3.2"
+  VERSION = "0.3.3"
 
   # What to do when a class is added with a name that already exists
   enum OnCollision
@@ -36,16 +36,18 @@ module HTMLClass
 
     class_property(html_class_dictionary) { Dictionary.new(merge: html_class_merge) }
 
+    macro inherited
+      class_property(html_class_merge) { \{{@type.superclass.id}}.html_class_merge }
+
+      class_property(html_class_dictionary) { \{{@type.superclass.id}}.html_class_dictionary }
+    end
+
     private def self.html_class(key, html_class, on_collision : OnCollision = :merge)
       self.html_class_dictionary = html_class_dictionary.add(key, html_class, on_collision)
     end
 
     private def self.html_class(dictionary, on_collision : OnCollision = :merge)
       self.html_class_dictionary = html_class_dictionary.add(dictionary, on_collision)
-    end
-
-    macro inherited
-      class_property(html_class_dictionary) { \{{@type.superclass.id}}.html_class_dictionary }
     end
   end
 end

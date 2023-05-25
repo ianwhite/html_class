@@ -24,6 +24,12 @@ end
 
 class SubLargeView < LargeView
   # testing that the dictionary is inherited, and that the dictionary is not copied
+  # also testing overriding the merge strategy
+  self.html_class_merge = HTMLClass::JoinMerge.new
+end
+
+class SubSubLargeView < SubLargeView
+  # testing inheritance of merge strategy
 end
 
 describe "README examples" do
@@ -50,6 +56,13 @@ describe "README examples" do
 
   it "testing inheritance" do
     MyView.html_class_dictionary.object_id.should_not eq SubView.html_class_dictionary.object_id
+    MyView.html_class_merge.object_id.should eq HTMLClassMerge::Tailwind.object_id
+
     LargeView.html_class_dictionary.object_id.should eq SubLargeView.html_class_dictionary.object_id
+    LargeView.html_class_merge.object_id.should eq HTMLClassMerge::Tailwind.object_id
+
+    SubLargeView.html_class_merge.should be_a HTMLClass::JoinMerge
+
+    SubSubLargeView.html_class_merge.object_id.should eq SubLargeView.html_class_merge.object_id
   end
 end
