@@ -5,9 +5,9 @@ require "./html_class/dictionary"
 require "./html_class/scanner"
 
 module HTMLClass
-  VERSION = "0.3.4"
+  VERSION = "0.4.0"
 
-  # What to do when a class is added with a name that already exists
+  # What to do when a HTML class is added with a name that already exists
   enum OnCollision
     Replace
     Merge
@@ -25,7 +25,7 @@ module HTMLClass
   class_property default_merge : HTMLClassMerge::Merge = JoinMerge.new
 
   def html_class(*args, **kwargs) : String
-    html_class_scanner.scan(*args, **kwargs)
+    html_class_scanner.scan(*args, **kwargs).to_s
   end
 
   private def html_class_scanner : Scanner

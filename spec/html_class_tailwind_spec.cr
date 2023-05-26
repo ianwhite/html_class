@@ -41,7 +41,7 @@ module HTMLClass
       obj.class.html_class_merge.object_id.should eq HTMLClassMerge::Tailwind.object_id
     end
 
-    it "allows inheriting keys peicemeal, and augmenting" do
+    it "allows inheriting keys piecemeal, and augmenting" do
       obj = TestIncludeHTMLClassSubclass.new
       obj.html_class(:big_button).should eq "bg-blue-500 text-white hover:bg-blue-600 text-2xl rounded-lg"
     end

@@ -1,59 +1,73 @@
 module HTMLClass
-  # Coerces a variety of arguments into a String of html classes
-  # Hashes and NameTuples are turned into arrays such that the keys are only included if the value is true.
-  # Symbols are converted to to html classes via @dictionary.
-  # All sets of symbols are also looked up in the @dictionary so any specific behaviour of a set of symbols
-  # can be defined.
+  # Coerces a variety of arguments into an array of HTML class tokens
+  # Hashes and NameTuples are turned into arrays such that the keys are only included if their values are true.
+  # Symbols are converted to html classes via @dictionary.
   #
-  # Each instance of scanning should be independent of each other, and thus a new instance should be created
+  # #to_s returns the merged HTML class tokens as a String
+  #
+  # All sets of symbols are also looked up in the @dictionary so any specific behaviour of a *Set* of symbols
+  # can be defined.
   class Scanner
     @dictionary : Dictionary
-
     @merge : HTMLClassMerge::Merge
 
+    @tokens = Array(String).new
     @seen_keys = Array(Symbol).new
-
     @seen_key_sets = Array(Set(Symbol)).new
 
     def initialize(@dictionary, @merge)
     end
 
-    def scan(*args) : String
-      @merge.merge args.flat_map { |arg| scan arg }
+    def to_s(io : IO) : Nil
+      io << @merge.merge(@tokens)
+      nil
     end
 
-    def scan(*args, **kwargs) : String
+    def scan(*args) : self
+      args.each { |arg| scan arg }
+      self
+    end
+
+    def scan(*args, **kwargs) : self
       scan(*args, kwargs)
     end
 
-    def scan(_nil : Nil) : String
-      ""
+    def scan(_nil : Nil) : self
+      self
     end
 
-    def scan(optional : Hash) : String
-      @merge.merge optional.select { |_, v| v }.keys.flat_map { |arg| scan arg }
+    def scan(optional : Hash) : self
+      optional.select { |_, v| v }.keys.each { |arg| scan arg }
+      self
     end
 
-    def scan(optional : NamedTuple) : String
+    def scan(optional : NamedTuple) : self
       scan optional.to_h
     end
 
-    def scan(args : Array) : String
-      @merge.merge args.flat_map { |arg| scan arg }
+    def scan(args : Array) : self
+      args.each { |arg| scan arg }
+      self
     end
 
-    def scan(html_class : String) : String
-      html_class
+    def scan(_nil : Nil) : self
+      self
     end
 
-    def scan(key : Symbol) : String
+    def scan(html_class : String) : self
+      @tokens << html_class
+      self
+    end
+
+    def scan(key : Symbol) : self
       @seen_keys << key
 
       possible_key_sets = possible_key_sets(@seen_keys)
       keys = [key] + possible_key_sets - @seen_key_sets
       @seen_key_sets = possible_key_sets
 
-      @merge.merge keys.compact_map { |k| @dictionary[k]? }
+      @tokens.concat keys.compact_map { |k| @dictionary[k]? }
+      self
     end
 
     # return all possible key sets for the given keys
