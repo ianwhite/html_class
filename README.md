@@ -40,15 +40,19 @@ view.html_class(:button, success: false) # => "rounded p-3 bg-gray-50 border-bla
 view.html_class(:button, "rounded-none") # => "p-3 bg-gray-50 border-black text-black rounded-none"
 view.html_class(:button, success: true)  # => "rounded p-3 bg-green-50 border-green-900 text-green"
 
-# you can inherit html_classes, and merge or replace them
+# you can inherit html_classes, and merge or replace them when there are name collisions
 class SubView < MyView
-  html_class :h1, "font-bold", :merge   # default is :merge
+  html_class :tiny_button, :button                  # you can copy a definition by name
+  html_class :tiny_button, "rounded-sm text-xs p-1" # and :merge new html classes into it
+
+  html_class :h1, "font-bold", :merge   # the default collision strategy is :merge
   html_class :button, "", :replace      # but you can also :replace
 end
 
 sub_view = SubView.new
-sub_view.html_class(:h1)     # => "text-xl font-bold"
-sub_view.html_class(:button) # => ""
+sub_view.html_class(:h1)          # => "text-xl font-bold"
+sub_view.html_class(:button)      # => ""
+sub_view.html_class(:tiny_button) # => "bg-gray-50 border-black text-black rounded-sm text-xs p-1"
 
 # you can also import multiple html class dictionaries at will (NB this class does not inherit form the above)
 class LargeView

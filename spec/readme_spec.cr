@@ -10,8 +10,11 @@ class MyView
 end
 
 class SubView < MyView
-  html_class :h1, "font-bold", :merge # default is :merge
-  html_class :button, "", :replace    # but you can also :replace
+  html_class :tiny_button, :button                  # you can copy a definition by name
+  html_class :tiny_button, "rounded-sm text-xs p-1" # and :merge new html classes
+
+  html_class :h1, "font-bold", :merge   # the default collision strategy is :merge
+  html_class :button, "", :replace      # but you can also :replace
 end
 
 class LargeView
@@ -46,6 +49,7 @@ describe "README examples" do
     sub_view.html_class(:success).should eq "bg-green-50 border-green-900 text-green-900"
     sub_view.html_class(:h1).should eq "text-xl font-bold"
     sub_view.html_class(:button).should eq ""
+    sub_view.html_class(:tiny_button).should eq "bg-gray-50 border-black text-black rounded-sm text-xs p-1"
   end
 
   it "LargeView example" do

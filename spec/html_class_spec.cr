@@ -64,6 +64,14 @@ module HTMLClass
         args = [:card, ["foo"], [:card, ["foo"], {success: true, failure: false}]]
         obj = TestIncludeHTMLClass.new
         obj.html_class(args).should eq "border rounded p-5 foo border rounded p-5 foo text-green border-green border-green border-green"
+
+        obj.html_class([{ card: true }, ["a", ["b", "c"]]]).should eq "border rounded p-5 a b c"
+      end
+
+      it "html_class ignores nil" do
+        obj = TestIncludeHTMLClass.new
+        obj.html_class(nil).should eq ""
+        obj.html_class(["a", nil], { nil => true}, [[["b", nil]]]).should eq "a b"
       end
     end
   end

@@ -5,16 +5,13 @@ require "./html_class/dictionary"
 require "./html_class/scanner"
 
 module HTMLClass
-  VERSION = "0.3.3"
+  VERSION = "0.3.4"
 
   # What to do when a class is added with a name that already exists
   enum OnCollision
     Replace
     Merge
   end
-
-  # Type of argument to #html_class instance method (see HTMLClass::Scanner#scan)
-  alias Arg = Symbol | String | Array(Symbol | String) | Hash(Symbol | String, Bool)
 
   # Simple merge strategy that just joins tokens with a space
   class JoinMerge
@@ -28,7 +25,11 @@ module HTMLClass
   class_property default_merge : HTMLClassMerge::Merge = JoinMerge.new
 
   def html_class(*args, **kwargs) : String
-    Scanner.new(self.class.html_class_dictionary, self.class.html_class_merge).scan(*args, **kwargs)
+    html_class_scanner.scan(*args, **kwargs)
+  end
+
+  private def html_class_scanner : Scanner
+    Scanner.new(self.class.html_class_dictionary, self.class.html_class_merge)
   end
 
   macro included
@@ -37,9 +38,9 @@ module HTMLClass
     class_property(html_class_dictionary) { Dictionary.new(merge: html_class_merge) }
 
     macro inherited
-      class_property(html_class_merge) { \{{@type.superclass.id}}.html_class_merge }
+      class_property(html_class_merge) { \{{ @type.superclass.id }}.html_class_merge }
 
-      class_property(html_class_dictionary) { \{{@type.superclass.id}}.html_class_dictionary }
+      class_property(html_class_dictionary) { \{{ @type.superclass.id }}.html_class_dictionary }
     end
 
     private def self.html_class(key, html_class, on_collision : OnCollision = :merge)

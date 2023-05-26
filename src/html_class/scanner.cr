@@ -4,6 +4,8 @@ module HTMLClass
   # Symbols are converted to to html classes via @dictionary.
   # All sets of symbols are also looked up in the @dictionary so any specific behaviour of a set of symbols
   # can be defined.
+  #
+  # Each instance of scanning should be independent of each other, and thus a new instance should be created
   class Scanner
     @dictionary : Dictionary
 
@@ -16,12 +18,16 @@ module HTMLClass
     def initialize(@dictionary, @merge)
     end
 
-    def scan(*args : HTMLClass::Arg | NamedTuple) : String
+    def scan(*args) : String
       @merge.merge args.flat_map { |arg| scan arg }
     end
 
-    def scan(*args : HTMLClass::Arg | NamedTuple, **kwargs) : String
-      scan(args.to_a + [kwargs.to_h])
+    def scan(*args, **kwargs) : String
+      scan(*args, kwargs)
+    end
+
+    def scan(_nil : Nil) : String
+      ""
     end
 
     def scan(optional : Hash) : String

@@ -14,6 +14,8 @@ module HTMLClass
   end
 
   class TestIncludeHTMLClassSubclass < TestTailwindIncludeHTMLClass
+    html_class :big_button, :button
+    html_class :big_button, "text-2xl rounded-lg"
   end
 
   describe "with Tailwind merge strategy" do
@@ -37,6 +39,11 @@ module HTMLClass
     it "inherits the merge strategy" do
       obj = TestIncludeHTMLClassSubclass.new
       obj.class.html_class_merge.object_id.should eq HTMLClassMerge::Tailwind.object_id
+    end
+
+    it "allows inheriting keys peicemeal, and augmenting" do
+      obj = TestIncludeHTMLClassSubclass.new
+      obj.html_class(:big_button).should eq "bg-blue-500 text-white hover:bg-blue-600 text-2xl rounded-lg"
     end
   end
 end
