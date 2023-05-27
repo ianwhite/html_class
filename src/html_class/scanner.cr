@@ -3,24 +3,18 @@ module HTMLClass
   # Hashes and NameTuples are turned into arrays such that the keys are only included if their values are true.
   # Symbols are converted to html classes via @dictionary.
   #
-  # #to_s returns the merged HTML class tokens as a String
+  # #tokens returns the array of tokens.
   #
   # All sets of symbols are also looked up in the @dictionary so any specific behaviour of a *Set* of symbols
   # can be defined.
   class Scanner
     @dictionary : Dictionary
-    @merge : HTMLClassMerge::Merge
 
-    @tokens = Array(String).new
+    getter tokens = Array(String).new
     @seen_keys = Array(Symbol).new
     @seen_key_sets = Array(Set(Symbol)).new
 
-    def initialize(@dictionary, @merge)
-    end
-
-    def to_s(io : IO) : Nil
-      io << @merge.merge(@tokens)
-      nil
+    def initialize(@dictionary)
     end
 
     def scan(*args) : self

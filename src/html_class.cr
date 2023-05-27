@@ -25,11 +25,9 @@ module HTMLClass
   class_property default_merge : HTMLClassMerge::Merge = JoinMerge.new
 
   def html_class(*args, **kwargs) : String
-    html_class_scanner.scan(*args, **kwargs).to_s
-  end
-
-  private def html_class_scanner : Scanner
-    Scanner.new(self.class.html_class_dictionary, self.class.html_class_merge)
+    self.class.html_class_merge.merge Scanner.new(self.class.html_class_dictionary)
+                                             .scan(*args, **kwargs)
+                                             .tokens
   end
 
   macro included

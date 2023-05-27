@@ -11,26 +11,24 @@ def new_test_scanner
     Set{:foo, :bar, :baz} => "foo-bar-baz"
   })
 
-  merge = HTMLClass::JoinMerge.new
-
-  HTMLClass::Scanner.new(dictionary, merge)
+  HTMLClass::Scanner.new(dictionary)
 end
 
 module HTMLClass
   describe "Scanner#scan" do
-    it "should return the correct class for a single dictionary key" do
-      new_test_scanner.scan(:foo).to_s.should eq "foo"
-      new_test_scanner.scan(:bar).to_s.should eq "bar"
-      new_test_scanner.scan(:baz).to_s.should eq "baz"
+    it "should return the correct token for a single dictionary key" do
+      new_test_scanner.scan(:foo).tokens.should eq ["foo"]
+      new_test_scanner.scan(:bar).tokens.should eq ["bar"]
+      new_test_scanner.scan(:baz).tokens.should eq ["baz"]
     end
 
     it "when scanning multiple dictionary keys, results for combination keys are emitted only once, and at the point where the combintaion is first seen" do
-      new_test_scanner.scan(:foo, :bar).to_s.should eq "foo bar foo-bar"
-      new_test_scanner.scan(:bar, :foo).to_s.should eq "bar foo foo-bar"
-      new_test_scanner.scan(:foo, :bar, :baz).to_s.should eq "foo bar foo-bar baz foo-baz bar-baz foo-bar-baz"
-      new_test_scanner.scan(:baz, :foo, :baz).to_s.should eq "baz foo foo-baz baz"
-      new_test_scanner.scan(:bar, :baz, "HELLO", :foo).to_s.should eq "bar baz bar-baz HELLO foo foo-bar foo-baz foo-bar-baz"
-      new_test_scanner.scan([:bar], { baz: true }, { "HELLO" => true, :foo => true }).to_s.should eq "bar baz bar-baz HELLO foo foo-bar foo-baz foo-bar-baz"
+      new_test_scanner.scan(:foo, :bar).tokens.should eq %w[foo bar foo-bar]
+      new_test_scanner.scan(:bar, :foo).tokens.should eq %w[bar foo foo-bar]
+      new_test_scanner.scan(:foo, :bar, :baz).tokens.should eq %w[foo bar foo-bar baz foo-baz bar-baz foo-bar-baz]
+      new_test_scanner.scan(:baz, :foo, :baz).tokens.should eq %w[baz foo foo-baz baz]
+      new_test_scanner.scan(:bar, :baz, "HELLO", :foo).tokens.should eq %w[bar baz bar-baz HELLO foo foo-bar foo-baz foo-bar-baz]
+      new_test_scanner.scan([:bar], { baz: true }, { "HELLO" => true, :foo => true }).tokens.should eq %w[bar baz bar-baz HELLO foo foo-bar foo-baz foo-bar-baz]
     end
   end
 end
