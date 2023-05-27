@@ -5,7 +5,7 @@ require "./html_class/dictionary"
 require "./html_class/scanner"
 
 module HTMLClass
-  VERSION = "0.4.0"
+  VERSION = "0.4.1"
 
   # What to do when a HTML class is added with a name that already exists
   enum OnCollision
