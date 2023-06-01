@@ -11,19 +11,15 @@ module HTMLClass
     @dictionary : Dictionary
 
     getter tokens = Array(String).new
-    @seen_keys = Array(Symbol).new
-    @seen_key_sets = Array(Set(Symbol)).new
+    @scanned_keys = Array(Symbol).new
+    @scanned_key_sets = Array(Set(Symbol)).new
 
     def initialize(@dictionary)
     end
 
-    def scan(*args) : self
-      args.each { |arg| scan arg }
-      self
-    end
-
     def scan(*args, **kwargs) : self
-      scan(*args, kwargs)
+      scan args
+      scan kwargs
     end
 
     def scan(_nil : Nil) : self
@@ -39,7 +35,7 @@ module HTMLClass
       scan optional.to_h
     end
 
-    def scan(args : Array) : self
+    def scan(args : Enumerable) : self
       args.each { |arg| scan arg }
       self
     end
@@ -54,11 +50,11 @@ module HTMLClass
     end
 
     def scan(key : Symbol) : self
-      @seen_keys << key
+      @scanned_keys << key
 
-      possible_key_sets = possible_key_sets(@seen_keys)
-      keys = [key] + possible_key_sets - @seen_key_sets
-      @seen_key_sets = possible_key_sets
+      possible_key_sets = possible_key_sets(@scanned_keys)
+      keys = [key] + possible_key_sets - @scanned_key_sets
+      @scanned_key_sets = possible_key_sets
 
       @tokens.concat keys.compact_map { |k| @dictionary[k]? }
       self

@@ -6,7 +6,7 @@ module HTMLClass
     include HTMLClass::Tailwind
 
     html_class :button, "rounded bg-blue-500 text-white hover:bg-blue-600"
-    html_class :disabled, "opacity-50"
+    html_class [:disabled], "opacity-50"
     html_class [:button, :disabled], "cursor-not-allowed"
     html_class :danger, "bg-red-500 hover:bg-red-600"
     html_class :success, "bg-green-200 hover:bg-green-300 text-green-800 hover:text-green-900"
@@ -32,6 +32,7 @@ module HTMLClass
     it "merges array arguments correctly" do
       obj = TestTailwindIncludeHTMLClass.new
       obj.html_class(["text-2xl text-sm", ["text-3xl"], { "text-4xl" => true }]).should eq "text-4xl"
+      obj.html_class([:button, :disabled]).should eq "rounded bg-blue-500 text-white hover:bg-blue-600 opacity-50 cursor-not-allowed"
     end
   end
 

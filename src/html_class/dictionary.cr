@@ -22,10 +22,10 @@ module HTMLClass
 
     def add(key : Symbol | Enumerable(Symbol), html_class : String, on_collision : OnCollision = :merge) : self
       key = to_key(key)
-      clone dict: @dict.merge({ key => handle_collision(key, html_class, on_collision)})
+      clone dict: @dict.merge({ key => handle_collision(key, html_class, on_collision) })
     end
 
-    def add(key : Symbol | Enumerable(Symbol), other_key : Symbol | Enumerable(Symbol), on_collision : OnCollision = :merge) : self
+    def add(key, other_key : Symbol | Enumerable(Symbol), on_collision : OnCollision = :merge) : self
       add key, self[to_key(other_key)], on_collision
     end
 
@@ -36,7 +36,9 @@ module HTMLClass
     end
 
     private def to_key(key : Symbol | Enumerable(Symbol))
-      key.is_a?(Symbol) ? key : key.to_set
+      return key if key.is_a?(Symbol)
+      return key.first if key.size == 1
+      key.to_set
     end
 
     private def handle_collision(key, html_class, on_collision)
