@@ -1,5 +1,5 @@
 module HTMLClass
-  # A dictionary of HTML classes, where keys are symbols or sets of symbols.
+  # A dictionary of HTML classes, where keys are symbols or sets of 2 or more symbols, and values are Strings.
   # Contains a reference to a merge strategy, which is used when a key already exists, and
   # the #add OnCollision strategy is set to :merge.
   class Dictionary
@@ -25,8 +25,8 @@ module HTMLClass
       clone dict: @dict.merge({ key => handle_collision(key, html_class, on_collision) })
     end
 
-    def add(key, other_key : Symbol | Enumerable(Symbol), on_collision : OnCollision = :merge) : self
-      add key, self[to_key(other_key)], on_collision
+    def add(key, existing_key : Symbol | Enumerable(Symbol), on_collision : OnCollision = :merge) : self
+      add key, self[to_key(existing_key)], on_collision
     end
 
     def add(dictionary : Dictionary, on_collision : OnCollision = :merge) : self

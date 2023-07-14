@@ -31,6 +31,7 @@ module HTMLClass
 
     it "merges array arguments correctly" do
       obj = TestTailwindIncludeHTMLClass.new
+
       obj.html_class(["text-2xl text-sm", ["text-3xl"], { "text-4xl" => true }]).should eq "text-4xl"
       obj.html_class([:button, :disabled]).should eq "rounded bg-blue-500 text-white hover:bg-blue-600 opacity-50 cursor-not-allowed"
     end
@@ -39,11 +40,13 @@ module HTMLClass
   describe "testing inheritance" do
     it "inherits the merge strategy" do
       obj = TestIncludeHTMLClassSubclass.new
+
       obj.class.html_class_merge.object_id.should eq HTMLClassMerge::Tailwind.object_id
     end
 
     it "allows inheriting keys piecemeal, and augmenting" do
       obj = TestIncludeHTMLClassSubclass.new
+
       obj.html_class(:big_button).should eq "bg-blue-500 text-white hover:bg-blue-600 text-2xl rounded-lg"
     end
   end

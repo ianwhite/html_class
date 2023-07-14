@@ -2,10 +2,11 @@ require "html_class_merge/merge"
 require "html_class_merge/tokenize"
 
 require "./html_class/dictionary"
-require "./html_class/scanner"
+require "./html_class/flatten_args"
+require "./html_class/substitute"
 
 module HTMLClass
-  VERSION = "0.4.2"
+  VERSION = "0.5.0"
 
   # What to do when a HTML class is added with a name that already exists
   enum OnCollision
@@ -24,10 +25,13 @@ module HTMLClass
 
   class_property default_merge : HTMLClassMerge::Merge = JoinMerge.new
 
-  def html_class(*args, **kwargs) : String
-    self.class.html_class_merge.merge Scanner.new(self.class.html_class_dictionary)
-                                             .scan(*args, **kwargs)
-                                             .tokens
+  def html_class(*args, **nargs) : String
+    html_class FlattenArgs.flatten_args(*args, **nargs)
+  end
+
+  def html_class(tokens : Array(String | Symbol)) : String
+    tokens = Substitute.substitute(tokens, self.class.html_class_dictionary)
+    self.class.html_class_merge.merge tokens
   end
 
   macro included
